@@ -1,0 +1,63 @@
+{
+  "name": "StockLedgerEntry",
+  "module": "stock",
+  "fields": [
+    {
+      "name": "item_code",
+      "label": "Item Code",
+      "fieldtype": "Link",
+      "options": "Item",
+      "required": true
+    },
+    {
+      "name": "warehouse",
+      "label": "Warehouse",
+      "fieldtype": "Link",
+      "options": "Warehouse",
+      "required": true
+    },
+    {
+      "name": "posting_date",
+      "label": "Posting Date",
+      "fieldtype": "Date",
+      "required": true
+    },
+    {
+      "name": "actual_qty",
+      "label": "Actual Qty",
+      "fieldtype": "Float",
+      "default": "0"
+    },
+    {
+      "name": "incoming_rate",
+      "label": "Incoming Rate",
+      "fieldtype": "Currency",
+      "default": "0"
+    },
+    {
+      "name": "voucher_type",
+      "label": "Voucher Type",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "voucher_no",
+      "label": "Voucher No",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "company",
+      "label": "Company",
+      "fieldtype": "Link",
+      "options": "Company",
+      "required": true
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true
+    }
+  ]
+}

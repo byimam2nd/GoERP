@@ -1,0 +1,45 @@
+{
+  "name": "Fiscal Year",
+  "module": "accounting",
+  "fields": [
+    {
+      "name": "year",
+      "label": "Year",
+      "fieldtype": "Data",
+      "required": true,
+      "unique": true
+    },
+    {
+      "name": "year_start_date",
+      "label": "Start Date",
+      "fieldtype": "Date",
+      "required": true
+    },
+    {
+      "name": "year_end_date",
+      "label": "End Date",
+      "fieldtype": "Date",
+      "required": true
+    },
+    {
+      "name": "is_closed",
+      "label": "Is Closed",
+      "fieldtype": "Check",
+      "default": "0"
+    },
+    {
+      "name": "disabled",
+      "label": "Disabled",
+      "fieldtype": "Check",
+      "default": "0"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true
+    }
+  ]
+}

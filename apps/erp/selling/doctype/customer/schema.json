@@ -1,0 +1,41 @@
+{
+  "name": "Customer",
+  "module": "selling",
+  "fields": [
+    {
+      "name": "customer_name",
+      "label": "Customer Name",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "customer_type",
+      "label": "Customer Type",
+      "fieldtype": "Select",
+      "options": "Individual\nCompany",
+      "default": "Company"
+    },
+    {
+      "name": "customer_group",
+      "label": "Customer Group",
+      "fieldtype": "Select",
+      "options": "All Customer Groups\nIndividual\nCommercial\nNon Profit\nGovernment",
+      "default": "All Customer Groups"
+    },
+    {
+      "name": "territory",
+      "label": "Territory",
+      "fieldtype": "Data",
+      "default": "All Territories"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

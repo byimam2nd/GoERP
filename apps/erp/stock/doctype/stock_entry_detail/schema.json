@@ -1,0 +1,65 @@
+{
+  "name": "StockEntryDetail",
+  "module": "stock",
+  "fields": [
+    {
+      "name": "parent",
+      "label": "Parent Stock Entry",
+      "fieldtype": "Link",
+      "options": "StockEntry",
+      "required": true
+    },
+    {
+      "name": "item_code",
+      "label": "Item Code",
+      "fieldtype": "Link",
+      "options": "Item",
+      "required": true
+    },
+    {
+      "name": "qty",
+      "label": "Quantity",
+      "fieldtype": "Float",
+      "default": "1"
+    },
+    {
+      "name": "rate",
+      "label": "Rate",
+      "fieldtype": "Currency",
+      "default": "0"
+    },
+    {
+      "name": "s_warehouse",
+      "label": "Source Warehouse",
+      "fieldtype": "Link",
+      "options": "Warehouse"
+    },
+    {
+      "name": "t_warehouse",
+      "label": "Target Warehouse",
+      "fieldtype": "Link",
+      "options": "Warehouse"
+    },
+    {
+      "name": "serial_no",
+      "label": "Serial Number",
+      "fieldtype": "Link",
+      "options": "SerialNo"
+    },
+    {
+      "name": "batch_no",
+      "label": "Batch Number",
+      "fieldtype": "Link",
+      "options": "Batch"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

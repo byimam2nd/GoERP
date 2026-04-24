@@ -1,0 +1,63 @@
+{
+  "name": "DocField",
+  "module": "meta",
+  "fields": [
+    {
+      "name": "parent",
+      "label": "Parent DocType",
+      "fieldtype": "Link",
+      "options": "DocType",
+      "required": true
+    },
+    {
+      "name": "fieldname",
+      "label": "Fieldname",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "label",
+      "label": "Label",
+      "fieldtype": "Data"
+    },
+    {
+      "name": "fieldtype",
+      "label": "Field Type",
+      "fieldtype": "Select",
+      "options": "Data\nInt\nFloat\nCurrency\nDate\nDateTime\nCheck\nLink\nSelect\nText\nSection Break\nColumn Break",
+      "required": true
+    },
+    {
+      "name": "options",
+      "label": "Options",
+      "fieldtype": "Text"
+    },
+    {
+      "name": "required",
+      "label": "Required",
+      "fieldtype": "Check",
+      "default": "0"
+    },
+    {
+      "name": "unique",
+      "label": "Unique",
+      "fieldtype": "Check",
+      "default": "0"
+    },
+    {
+      "name": "in_list_view",
+      "label": "In List View",
+      "fieldtype": "Check",
+      "default": "0"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

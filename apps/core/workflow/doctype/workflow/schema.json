@@ -1,0 +1,41 @@
+{
+  "name": "Workflow",
+  "module": "workflow",
+  "fields": [
+    {
+      "name": "workflow_name",
+      "label": "Workflow Name",
+      "fieldtype": "Data",
+      "required": true,
+      "unique": true
+    },
+    {
+      "name": "target_doctype",
+      "label": "Target DocType",
+      "fieldtype": "Link",
+      "options": "DocType",
+      "required": true
+    },
+    {
+      "name": "document_state_field",
+      "label": "Document State Field",
+      "fieldtype": "Data",
+      "default": "workflow_state"
+    },
+    {
+      "name": "is_active",
+      "label": "Is Active",
+      "fieldtype": "Check",
+      "default": "1"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

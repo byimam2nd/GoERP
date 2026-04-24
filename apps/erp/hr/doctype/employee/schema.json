@@ -1,0 +1,61 @@
+{
+  "name": "Employee",
+  "module": "hr",
+  "fields": [
+    {
+      "name": "employee_id",
+      "label": "Employee ID",
+      "fieldtype": "Data",
+      "required": true,
+      "unique": true
+    },
+    {
+      "name": "first_name",
+      "label": "First Name",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "last_name",
+      "label": "Last Name",
+      "fieldtype": "Data"
+    },
+    {
+      "name": "company",
+      "label": "Company",
+      "fieldtype": "Link",
+      "options": "Company",
+      "required": true
+    },
+    {
+      "name": "department",
+      "label": "Department",
+      "fieldtype": "Data"
+    },
+    {
+      "name": "designation",
+      "label": "Designation",
+      "fieldtype": "Data"
+    },
+    {
+      "name": "date_of_joining",
+      "label": "Date of Joining",
+      "fieldtype": "Date"
+    },
+    {
+      "name": "user_id",
+      "label": "User ID",
+      "fieldtype": "Link",
+      "options": "User"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

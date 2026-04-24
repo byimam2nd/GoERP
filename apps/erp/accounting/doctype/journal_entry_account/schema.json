@@ -1,0 +1,41 @@
+{
+  "name": "JournalEntryAccount",
+  "module": "accounting",
+  "fields": [
+    {
+      "name": "parent",
+      "label": "Parent Journal Entry",
+      "fieldtype": "Link",
+      "options": "JournalEntry",
+      "required": true
+    },
+    {
+      "name": "account",
+      "label": "Account",
+      "fieldtype": "Link",
+      "options": "Account",
+      "required": true
+    },
+    {
+      "name": "debit",
+      "label": "Debit",
+      "fieldtype": "Currency",
+      "default": "0"
+    },
+    {
+      "name": "credit",
+      "label": "Credit",
+      "fieldtype": "Currency",
+      "default": "0"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

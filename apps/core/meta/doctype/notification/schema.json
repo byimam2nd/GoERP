@@ -1,0 +1,53 @@
+{
+  "name": "Notification",
+  "module": "meta",
+  "fields": [
+    {
+      "name": "enabled",
+      "label": "Enabled",
+      "fieldtype": "Check",
+      "default": "1"
+    },
+    {
+      "name": "ref_doctype",
+      "label": "DocType",
+      "fieldtype": "Link",
+      "options": "DocType",
+      "required": true
+    },
+    {
+      "name": "event",
+      "label": "Event",
+      "fieldtype": "Select",
+      "options": "AfterInsert\nAfterSave\nOnSubmit\nOnCancel",
+      "required": true
+    },
+    {
+      "name": "send_to_role",
+      "label": "Send to Role",
+      "fieldtype": "Link",
+      "options": "Role"
+    },
+    {
+      "name": "subject",
+      "label": "Subject",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "message_template",
+      "label": "Message Template",
+      "fieldtype": "Text",
+      "required": true
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

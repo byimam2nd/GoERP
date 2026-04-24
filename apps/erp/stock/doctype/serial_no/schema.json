@@ -1,0 +1,48 @@
+{
+  "name": "SerialNo",
+  "module": "stock",
+  "fields": [
+    {
+      "name": "serial_no",
+      "label": "Serial Number",
+      "fieldtype": "Data",
+      "required": true,
+      "unique": true
+    },
+    {
+      "name": "item_code",
+      "label": "Item",
+      "fieldtype": "Link",
+      "options": "Item",
+      "required": true
+    },
+    {
+      "name": "warehouse",
+      "label": "Warehouse",
+      "fieldtype": "Link",
+      "options": "Warehouse"
+    },
+    {
+      "name": "status",
+      "label": "Status",
+      "fieldtype": "Select",
+      "options": "Active\nInactive\nDelivered\nExpired",
+      "default": "Active"
+    },
+    {
+      "name": "company",
+      "label": "Company",
+      "fieldtype": "Link",
+      "options": "Company"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

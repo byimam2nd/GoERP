@@ -1,0 +1,46 @@
+{
+  "name": "DocLink",
+  "module": "meta",
+  "fields": [
+    {
+      "name": "parent_doctype",
+      "label": "Parent DocType",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "parent_name",
+      "label": "Parent Name",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "child_doctype",
+      "label": "Child DocType",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "child_name",
+      "label": "Child Name",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "link_type",
+      "label": "Link Type",
+      "fieldtype": "Select",
+      "options": "Reference\nTransformation\nPayment",
+      "default": "Reference"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

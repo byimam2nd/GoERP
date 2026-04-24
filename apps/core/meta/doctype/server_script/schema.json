@@ -1,0 +1,47 @@
+{
+  "name": "ServerScript",
+  "module": "meta",
+  "fields": [
+    {
+      "name": "script_name",
+      "label": "Script Name",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "ref_doctype",
+      "label": "Reference DocType",
+      "fieldtype": "Link",
+      "options": "DocType",
+      "required": true
+    },
+    {
+      "name": "event",
+      "label": "Trigger Event",
+      "fieldtype": "Select",
+      "options": "BeforeInsert\nAfterInsert\nBeforeSave\nAfterSave\nOnSubmit\nOnCancel",
+      "required": true
+    },
+    {
+      "name": "script",
+      "label": "Script (Lua)",
+      "fieldtype": "Text",
+      "required": true
+    },
+    {
+      "name": "is_active",
+      "label": "Active",
+      "fieldtype": "Check",
+      "default": "1"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

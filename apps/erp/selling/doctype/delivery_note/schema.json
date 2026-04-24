@@ -1,0 +1,64 @@
+{
+  "name": "DeliveryNote",
+  "module": "selling",
+  "is_submittable": true,
+  "fields": [
+    {
+      "name": "sales_order",
+      "label": "Sales Order",
+      "fieldtype": "Link",
+      "options": "SalesOrder",
+      "reqd": 1
+    },
+    {
+      "name": "customer",
+      "label": "Customer",
+      "fieldtype": "Link",
+      "options": "Customer",
+      "read_only": true
+    },
+    {
+      "name": "posting_date",
+      "label": "Posting Date",
+      "fieldtype": "Date",
+      "reqd": 1
+    },
+    {
+      "name": "warehouse",
+      "label": "Warehouse",
+      "fieldtype": "Link",
+      "options": "Warehouse",
+      "reqd": 1
+    },
+    {
+      "name": "items",
+      "label": "Items",
+      "fieldtype": "Table",
+      "options": "DeliveryNoteItem",
+      "reqd": 1
+    },
+    {
+      "name": "delivered_qty",
+      "label": "Total Delivered Qty",
+      "fieldtype": "Float",
+      "read_only": true
+    },
+    {
+      "name": "pending_invoice_qty",
+      "label": "Pending Invoice Qty",
+      "fieldtype": "Float",
+      "read_only": true
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true,
+      "submit": true,
+      "cancel": true
+    }
+  ]
+}

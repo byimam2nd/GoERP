@@ -1,0 +1,22 @@
+{
+  "name": "Role",
+  "module": "identity",
+  "fields": [
+    {
+      "name": "role_name",
+      "label": "Role Name",
+      "fieldtype": "Data",
+      "required": true,
+      "unique": true
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "name": "DataImport",
+  "module": "meta",
+  "fields": [
+    {
+      "name": "ref_doctype",
+      "label": "Target DocType",
+      "fieldtype": "Link",
+      "options": "DocType",
+      "required": true
+    },
+    {
+      "name": "total_rows",
+      "label": "Total Rows",
+      "fieldtype": "Int"
+    },
+    {
+      "name": "success_count",
+      "label": "Success Count",
+      "fieldtype": "Int",
+      "default": "0"
+    },
+    {
+      "name": "status",
+      "label": "Status",
+      "fieldtype": "Select",
+      "options": "Pending\nIn Progress\nSuccess\nPartial Success\nFailed",
+      "default": "Pending"
+    },
+    {
+      "name": "error_log",
+      "label": "Error Log",
+      "fieldtype": "Text"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

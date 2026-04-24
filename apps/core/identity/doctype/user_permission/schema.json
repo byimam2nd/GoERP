@@ -1,0 +1,41 @@
+{
+  "name": "UserPermission",
+  "module": "identity",
+  "fields": [
+    {
+      "name": "user",
+      "label": "User",
+      "fieldtype": "Link",
+      "options": "User",
+      "required": true
+    },
+    {
+      "name": "allow_doctype",
+      "label": "Allow DocType",
+      "fieldtype": "Link",
+      "options": "DocType",
+      "required": true
+    },
+    {
+      "name": "for_value",
+      "label": "For Value",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "is_default",
+      "label": "Is Default",
+      "fieldtype": "Check",
+      "default": "0"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

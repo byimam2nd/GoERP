@@ -1,0 +1,45 @@
+{
+  "name": "PrintFormat",
+  "module": "meta",
+  "fields": [
+    {
+      "name": "format_name",
+      "label": "Format Name",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "doc_type",
+      "label": "Target DocType",
+      "fieldtype": "Link",
+      "options": "DocType",
+      "required": true
+    },
+    {
+      "name": "html_template",
+      "label": "HTML Template",
+      "fieldtype": "Text",
+      "required": true
+    },
+    {
+      "name": "custom_css",
+      "label": "Custom CSS",
+      "fieldtype": "Text"
+    },
+    {
+      "name": "is_default",
+      "label": "Is Default",
+      "fieldtype": "Check",
+      "default": "0"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "name": "WorkflowState",
+  "module": "workflow",
+  "fields": [
+    {
+      "name": "parent",
+      "label": "Parent Workflow",
+      "fieldtype": "Link",
+      "options": "Workflow",
+      "required": true
+    },
+    {
+      "name": "state",
+      "label": "State",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "doc_status",
+      "label": "Doc Status",
+      "fieldtype": "Select",
+      "options": "0\n1\n2",
+      "default": "0"
+    },
+    {
+      "name": "allow_edit",
+      "label": "Allow Edit",
+      "fieldtype": "Link",
+      "options": "Role"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

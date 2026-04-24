@@ -1,0 +1,58 @@
+{
+  "name": "RolePermission",
+  "module": "identity",
+  "fields": [
+    {
+      "name": "role",
+      "label": "Role",
+      "fieldtype": "Link",
+      "options": "Role",
+      "required": true
+    },
+    {
+      "name": "parent_doctype",
+      "label": "Parent DocType",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "read",
+      "label": "Read",
+      "fieldtype": "Check"
+    },
+    {
+      "name": "write",
+      "label": "Write",
+      "fieldtype": "Check"
+    },
+    {
+      "name": "can_create",
+      "label": "Create",
+      "fieldtype": "Check"
+    },
+    {
+      "name": "delete",
+      "label": "Delete",
+      "fieldtype": "Check"
+    },
+    {
+      "name": "submit",
+      "label": "Submit",
+      "fieldtype": "Check"
+    },
+    {
+      "name": "cancel",
+      "label": "Cancel",
+      "fieldtype": "Check"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

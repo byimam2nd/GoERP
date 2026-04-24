@@ -1,0 +1,50 @@
+{
+  "name": "Bin",
+  "module": "stock",
+  "fields": [
+    {
+      "name": "item_code",
+      "label": "Item Code",
+      "fieldtype": "Link",
+      "options": "Item",
+      "required": true
+    },
+    {
+      "name": "warehouse",
+      "label": "Warehouse",
+      "fieldtype": "Link",
+      "options": "Warehouse",
+      "required": true
+    },
+    {
+      "name": "actual_qty",
+      "label": "Actual Qty",
+      "fieldtype": "Float",
+      "default": "0"
+    },
+    {
+      "name": "reserved_qty",
+      "label": "Reserved Qty",
+      "fieldtype": "Float",
+      "default": "0"
+    },
+    {
+      "name": "valuation_rate",
+      "label": "Valuation Rate",
+      "fieldtype": "Currency",
+      "default": "0"
+    },
+    {
+      "name": "stock_value",
+      "label": "Stock Value",
+      "fieldtype": "Currency",
+      "default": "0"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true
+    }
+  ]
+}

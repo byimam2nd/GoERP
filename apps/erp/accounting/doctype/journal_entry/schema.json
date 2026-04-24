@@ -1,0 +1,65 @@
+{
+  "name": "JournalEntry",
+  "module": "accounting",
+  "is_submittable": true,
+  "fields": [
+    {
+      "name": "posting_date",
+      "label": "Posting Date",
+      "fieldtype": "Date",
+      "required": true
+    },
+    {
+      "name": "company",
+      "label": "Company",
+      "fieldtype": "Link",
+      "options": "Company",
+      "required": true
+    },
+    {
+      "name": "cheque_no",
+      "label": "Cheque/Reference No",
+      "fieldtype": "Data"
+    },
+    {
+      "name": "cheque_date",
+      "label": "Cheque Date",
+      "fieldtype": "Date"
+    },
+    {
+      "name": "user_remark",
+      "label": "Remark",
+      "fieldtype": "Text"
+    },
+    {
+      "name": "total_debit",
+      "label": "Total Debit",
+      "fieldtype": "Currency",
+      "read_only": true
+    },
+    {
+      "name": "total_credit",
+      "label": "Total Credit",
+      "fieldtype": "Currency",
+      "read_only": true
+    },
+    {
+      "name": "accounts",
+      "label": "Accounts",
+      "fieldtype": "Table",
+      "options": "JournalEntryAccount",
+      "required": true
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true,
+      "submit": true,
+      "cancel": true
+    }
+  ]
+}

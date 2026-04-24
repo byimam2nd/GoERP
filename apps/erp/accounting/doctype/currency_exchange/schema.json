@@ -1,0 +1,40 @@
+{
+  "name": "Currency Exchange",
+  "module": "accounting",
+  "fields": [
+    {
+      "name": "from_currency",
+      "label": "From Currency",
+      "fieldtype": "Link",
+      "options": "Currency",
+      "required": true
+    },
+    {
+      "name": "to_currency",
+      "label": "To Currency",
+      "fieldtype": "Link",
+      "options": "Currency",
+      "required": true
+    },
+    {
+      "name": "date",
+      "label": "Date",
+      "fieldtype": "Date",
+      "required": true
+    },
+    {
+      "name": "exchange_rate",
+      "label": "Exchange Rate",
+      "fieldtype": "Float",
+      "required": true
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true
+    }
+  ]
+}

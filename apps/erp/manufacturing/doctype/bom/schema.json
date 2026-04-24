@@ -1,0 +1,47 @@
+{
+  "name": "BOM",
+  "module": "manufacturing",
+  "fields": [
+    {
+      "name": "item",
+      "label": "Item to Produce",
+      "fieldtype": "Link",
+      "options": "Item",
+      "required": true
+    },
+    {
+      "name": "quantity",
+      "label": "Quantity",
+      "fieldtype": "Float",
+      "default": "1"
+    },
+    {
+      "name": "is_active",
+      "label": "Is Active",
+      "fieldtype": "Check",
+      "default": "1"
+    },
+    {
+      "name": "is_default",
+      "label": "Is Default",
+      "fieldtype": "Check",
+      "default": "0"
+    },
+    {
+      "name": "company",
+      "label": "Company",
+      "fieldtype": "Link",
+      "options": "Company",
+      "required": true
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

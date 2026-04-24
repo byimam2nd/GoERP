@@ -1,0 +1,40 @@
+{
+  "name": "NamingSeries",
+  "module": "meta",
+  "fields": [
+    {
+      "name": "ref_doctype",
+      "label": "DocType",
+      "fieldtype": "Link",
+      "options": "DocType",
+      "required": true
+    },
+    {
+      "name": "prefix",
+      "label": "Prefix Pattern",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "current_value",
+      "label": "Current Value",
+      "fieldtype": "Int",
+      "default": "0"
+    },
+    {
+      "name": "padding",
+      "label": "Number Padding",
+      "fieldtype": "Int",
+      "default": "4"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "name": "SalesInvoice",
+  "module": "selling",
+  "is_submittable": true,
+  "fields": [
+    {
+      "name": "customer",
+      "label": "Customer",
+      "fieldtype": "Link",
+      "options": "Customer",
+      "reqd": 1
+    },
+    {
+      "name": "posting_date",
+      "label": "Posting Date",
+      "fieldtype": "Date",
+      "reqd": 1
+    },
+    {
+      "name": "due_date",
+      "label": "Due Date",
+      "fieldtype": "Date",
+      "reqd": 1
+    },
+    {
+      "name": "delivery_note",
+      "label": "Delivery Note",
+      "fieldtype": "Link",
+      "options": "DeliveryNote"
+    },
+    {
+      "name": "sales_order",
+      "label": "Sales Order",
+      "fieldtype": "Link",
+      "options": "SalesOrder"
+    },
+    {
+      "name": "company",
+      "label": "Company",
+      "fieldtype": "Link",
+      "options": "Company",
+      "reqd": 1
+    },
+    {
+      "name": "items",
+      "label": "Items",
+      "fieldtype": "Table",
+      "options": "SalesInvoiceItem",
+      "reqd": 1
+    },
+    {
+      "name": "total",
+      "label": "Total",
+      "fieldtype": "Currency",
+      "read_only": true,
+      "formula": "sum(items.amount)"
+    },
+    {
+      "name": "net_total",
+      "label": "Net Total",
+      "fieldtype": "Currency",
+      "read_only": true
+    },
+    {
+      "name": "taxes",
+      "label": "Taxes and Charges",
+      "fieldtype": "Table",
+      "options": "SalesTaxesAndCharges"
+    },
+    {
+      "name": "tax_total",
+      "label": "Total Tax",
+      "fieldtype": "Currency",
+      "read_only": true
+    },
+    {
+      "name": "grand_total",
+      "label": "Grand Total",
+      "fieldtype": "Currency",
+      "read_only": true
+    },
+    {
+      "name": "outstanding_amount",
+      "label": "Outstanding Amount",
+      "fieldtype": "Currency",
+      "read_only": true
+    },
+    {
+      "name": "invoiced_qty",
+      "label": "Invoiced Qty",
+      "fieldtype": "Float",
+      "read_only": true,
+      "default": "0"
+    },
+    {
+      "name": "pending_invoice_qty",
+      "label": "Pending Invoice Qty",
+      "fieldtype": "Float",
+      "read_only": true
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true,
+      "submit": true,
+      "cancel": true
+    }
+  ]
+}

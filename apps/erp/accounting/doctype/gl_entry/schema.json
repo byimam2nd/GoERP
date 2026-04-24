@@ -1,0 +1,85 @@
+{
+  "name": "GL_Entry",
+  "module": "accounting",
+  "fields": [
+    {
+      "name": "posting_date",
+      "label": "Posting Date",
+      "fieldtype": "Date",
+      "required": true
+    },
+    {
+      "name": "account",
+      "label": "Account",
+      "fieldtype": "Link",
+      "options": "Account",
+      "required": true
+    },
+    {
+      "name": "debit",
+      "label": "Debit",
+      "fieldtype": "Currency",
+      "default": "0"
+    },
+    {
+      "name": "credit",
+      "label": "Credit",
+      "fieldtype": "Currency",
+      "default": "0"
+    },
+    {
+      "name": "currency",
+      "label": "Currency",
+      "fieldtype": "Link",
+      "options": "Currency"
+    },
+    {
+      "name": "exchange_rate",
+      "label": "Exchange Rate",
+      "fieldtype": "Float",
+      "default": "1"
+    },
+    {
+      "name": "debit_foreign",
+      "label": "Debit (Foreign)",
+      "fieldtype": "Currency",
+      "default": "0"
+    },
+    {
+      "name": "credit_foreign",
+      "label": "Credit (Foreign)",
+      "fieldtype": "Currency",
+      "default": "0"
+    },
+    {
+      "name": "voucher_type",
+      "label": "Voucher Type",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "voucher_no",
+      "label": "Voucher No",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "company",
+      "label": "Company",
+      "fieldtype": "Link",
+      "options": "Company",
+      "required": true
+    },
+    {
+      "name": "remarks",
+      "label": "Remarks",
+      "fieldtype": "Text"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true
+    }
+  ]
+}

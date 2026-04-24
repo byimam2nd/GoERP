@@ -1,0 +1,34 @@
+{
+  "name": "Tenant",
+  "module": "multitenant",
+  "fields": [
+    {
+      "name": "tenant_name",
+      "label": "Tenant Name",
+      "fieldtype": "Data",
+      "required": true,
+      "unique": true
+    },
+    {
+      "name": "domain",
+      "label": "Domain",
+      "fieldtype": "Data",
+      "unique": true
+    },
+    {
+      "name": "is_active",
+      "label": "Is Active",
+      "fieldtype": "Check",
+      "default": "1"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

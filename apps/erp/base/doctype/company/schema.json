@@ -1,0 +1,41 @@
+{
+  "name": "Company",
+  "module": "base",
+  "fields": [
+    {
+      "name": "company_name",
+      "label": "Company Name",
+      "fieldtype": "Data",
+      "required": true,
+      "unique": true
+    },
+    {
+      "name": "abbr",
+      "label": "Abbreviation",
+      "fieldtype": "Data",
+      "required": true,
+      "unique": true
+    },
+    {
+      "name": "default_currency",
+      "label": "Default Currency",
+      "fieldtype": "Select",
+      "options": "IDR\nUSD\nEUR",
+      "default": "IDR"
+    },
+    {
+      "name": "tax_id",
+      "label": "Tax ID (NPWP)",
+      "fieldtype": "Data"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

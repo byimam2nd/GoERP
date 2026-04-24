@@ -1,0 +1,73 @@
+{
+  "name": "PurchaseInvoice",
+  "module": "buying",
+  "is_submittable": true,
+  "fields": [
+    {
+      "name": "supplier",
+      "label": "Supplier",
+      "fieldtype": "Link",
+      "options": "Supplier",
+      "required": true
+    },
+    {
+      "name": "posting_date",
+      "label": "Posting Date",
+      "fieldtype": "Date",
+      "required": true
+    },
+    {
+      "name": "company",
+      "label": "Company",
+      "fieldtype": "Link",
+      "options": "Company",
+      "required": true
+    },
+    {
+      "name": "bill_no",
+      "label": "Supplier Bill No",
+      "fieldtype": "Data"
+    },
+    {
+      "name": "bill_date",
+      "label": "Supplier Bill Date",
+      "fieldtype": "Date"
+    },
+    {
+      "name": "credit_to",
+      "label": "Credit To (Payable Account)",
+      "fieldtype": "Link",
+      "options": "Account",
+      "required": true
+    },
+    {
+      "name": "expense_account",
+      "label": "Expense/Asset Account",
+      "fieldtype": "Link",
+      "options": "Account",
+      "required": true
+    },
+    {
+      "name": "total",
+      "label": "Total",
+      "fieldtype": "Currency",
+      "read_only": true
+    },
+    {
+      "name": "remarks",
+      "label": "Remarks",
+      "fieldtype": "Text"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true,
+      "submit": true,
+      "cancel": true
+    }
+  ]
+}

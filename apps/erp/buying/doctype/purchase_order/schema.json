@@ -1,0 +1,49 @@
+{
+  "name": "PurchaseOrder",
+  "module": "buying",
+  "is_submittable": true,
+  "fields": [
+    {
+      "name": "supplier",
+      "label": "Supplier",
+      "fieldtype": "Link",
+      "options": "Supplier",
+      "required": true
+    },
+    {
+      "name": "transaction_date",
+      "label": "Date",
+      "fieldtype": "Date",
+      "required": true
+    },
+    {
+      "name": "schedule_date",
+      "label": "Required By Date",
+      "fieldtype": "Date"
+    },
+    {
+      "name": "company",
+      "label": "Company",
+      "fieldtype": "Link",
+      "options": "Company",
+      "required": true
+    },
+    {
+      "name": "total",
+      "label": "Total",
+      "fieldtype": "Currency",
+      "read_only": true
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true,
+      "submit": true,
+      "cancel": true
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "name": "CustomField",
+  "module": "meta",
+  "fields": [
+    {
+      "name": "dt",
+      "label": "DocType",
+      "fieldtype": "Link",
+      "options": "DocType",
+      "required": true
+    },
+    {
+      "name": "label",
+      "label": "Label",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "fieldname",
+      "label": "Fieldname",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "field_type",
+      "label": "Field Type",
+      "fieldtype": "Select",
+      "options": "Data\nInt\nFloat\nCurrency\nDate\nDateTime\nCheck\nLink\nSelect\nText\nSection Break\nColumn Break",
+      "required": true
+    },
+    {
+      "name": "options",
+      "label": "Options",
+      "fieldtype": "Text"
+    },
+    {
+      "name": "insert_after",
+      "label": "Insert After",
+      "fieldtype": "Data"
+    },
+    {
+      "name": "is_required",
+      "label": "Is Required",
+      "fieldtype": "Check",
+      "default": "0"
+    },
+    {
+      "name": "in_list_view",
+      "label": "In List View",
+      "fieldtype": "Check",
+      "default": "0"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "name": "Batch",
+  "module": "stock",
+  "fields": [
+    {
+      "name": "batch_id",
+      "label": "Batch ID",
+      "fieldtype": "Data",
+      "required": true,
+      "unique": true
+    },
+    {
+      "name": "item_code",
+      "label": "Item",
+      "fieldtype": "Link",
+      "options": "Item",
+      "required": true
+    },
+    {
+      "name": "expiry_date",
+      "label": "Expiry Date",
+      "fieldtype": "Date"
+    },
+    {
+      "name": "manufacturing_date",
+      "label": "Manufacturing Date",
+      "fieldtype": "Date"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

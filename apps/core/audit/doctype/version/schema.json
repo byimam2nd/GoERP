@@ -1,0 +1,34 @@
+{
+  "name": "Version",
+  "module": "audit",
+  "fields": [
+    {
+      "name": "ref_doctype",
+      "label": "Ref DocType",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "docname",
+      "label": "Doc Name",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "data",
+      "label": "Change Data",
+      "fieldtype": "Text"
+    },
+    {
+      "name": "changed_by",
+      "label": "Changed By",
+      "fieldtype": "Data"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true
+    }
+  ]
+}

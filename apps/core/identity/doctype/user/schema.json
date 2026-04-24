@@ -1,0 +1,40 @@
+{
+  "name": "User",
+  "module": "identity",
+  "fields": [
+    {
+      "name": "username",
+      "label": "Username",
+      "fieldtype": "Data",
+      "required": true,
+      "unique": true
+    },
+    {
+      "name": "email",
+      "label": "Email",
+      "fieldtype": "Data",
+      "required": true,
+      "unique": true
+    },
+    {
+      "name": "full_name",
+      "label": "Full Name",
+      "fieldtype": "Data"
+    },
+    {
+      "name": "password",
+      "label": "Password",
+      "fieldtype": "Data",
+      "required": true
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

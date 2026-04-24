@@ -1,0 +1,48 @@
+{
+  "name": "PurchaseReceiptItem",
+  "module": "buying",
+  "fields": [
+    {
+      "name": "parent",
+      "label": "Parent Purchase Receipt",
+      "fieldtype": "Link",
+      "options": "PurchaseReceipt",
+      "required": true
+    },
+    {
+      "name": "item_code",
+      "label": "Item Code",
+      "fieldtype": "Link",
+      "options": "Item",
+      "required": true
+    },
+    {
+      "name": "qty",
+      "label": "Quantity",
+      "fieldtype": "Float",
+      "default": "1"
+    },
+    {
+      "name": "rate",
+      "label": "Rate",
+      "fieldtype": "Currency",
+      "default": "0"
+    },
+    {
+      "name": "warehouse",
+      "label": "Warehouse",
+      "fieldtype": "Link",
+      "options": "Warehouse",
+      "required": true
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

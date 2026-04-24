@@ -1,0 +1,47 @@
+{
+  "name": "PurchaseInvoiceItem",
+  "module": "buying",
+  "fields": [
+    {
+      "name": "parent",
+      "label": "Parent Purchase Invoice",
+      "fieldtype": "Link",
+      "options": "PurchaseInvoice",
+      "required": true
+    },
+    {
+      "name": "item_code",
+      "label": "Item Code",
+      "fieldtype": "Link",
+      "options": "Item",
+      "required": true
+    },
+    {
+      "name": "qty",
+      "label": "Quantity",
+      "fieldtype": "Float",
+      "default": "1"
+    },
+    {
+      "name": "rate",
+      "label": "Rate",
+      "fieldtype": "Currency",
+      "default": "0"
+    },
+    {
+      "name": "amount",
+      "label": "Amount",
+      "fieldtype": "Currency",
+      "read_only": true
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

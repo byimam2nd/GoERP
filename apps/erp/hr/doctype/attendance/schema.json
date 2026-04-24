@@ -1,0 +1,42 @@
+{
+  "name": "Attendance",
+  "module": "hr",
+  "fields": [
+    {
+      "name": "employee",
+      "label": "Employee",
+      "fieldtype": "Link",
+      "options": "Employee",
+      "required": true
+    },
+    {
+      "name": "attendance_date",
+      "label": "Attendance Date",
+      "fieldtype": "Date",
+      "required": true
+    },
+    {
+      "name": "status",
+      "label": "Status",
+      "fieldtype": "Select",
+      "options": "Present\nAbsent\nHalf Day\nLeave",
+      "default": "Present"
+    },
+    {
+      "name": "company",
+      "label": "Company",
+      "fieldtype": "Link",
+      "options": "Company",
+      "required": true
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

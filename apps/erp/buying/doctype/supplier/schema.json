@@ -1,0 +1,35 @@
+{
+  "name": "Supplier",
+  "module": "buying",
+  "fields": [
+    {
+      "name": "supplier_name",
+      "label": "Supplier Name",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "supplier_group",
+      "label": "Supplier Group",
+      "fieldtype": "Select",
+      "options": "All Supplier Groups\nDistributor\nManufacturer\nServices\nRetail",
+      "default": "All Supplier Groups"
+    },
+    {
+      "name": "supplier_type",
+      "label": "Supplier Type",
+      "fieldtype": "Select",
+      "options": "Individual\nCompany",
+      "default": "Company"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "name": "Currency",
+  "module": "accounting",
+  "fields": [
+    {
+      "name": "currency_name",
+      "label": "Currency Name",
+      "fieldtype": "Data",
+      "required": true,
+      "unique": true
+    },
+    {
+      "name": "symbol",
+      "label": "Symbol",
+      "fieldtype": "Data"
+    },
+    {
+      "name": "fraction",
+      "label": "Fraction",
+      "fieldtype": "Data"
+    },
+    {
+      "name": "fraction_units",
+      "label": "Fraction Units",
+      "fieldtype": "Int",
+      "default": "100"
+    },
+    {
+      "name": "is_base",
+      "label": "Is Base Currency",
+      "fieldtype": "Check",
+      "default": "0"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true
+    }
+  ]
+}

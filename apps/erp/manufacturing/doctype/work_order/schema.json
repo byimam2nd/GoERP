@@ -1,0 +1,66 @@
+{
+  "name": "WorkOrder",
+  "module": "manufacturing",
+  "is_submittable": true,
+  "fields": [
+    {
+      "name": "production_item",
+      "label": "Item to Produce",
+      "fieldtype": "Link",
+      "options": "Item",
+      "required": true
+    },
+    {
+      "name": "bom_no",
+      "label": "BOM",
+      "fieldtype": "Link",
+      "options": "BOM",
+      "required": true
+    },
+    {
+      "name": "qty",
+      "label": "Quantity to Manufacture",
+      "fieldtype": "Float",
+      "default": "1"
+    },
+    {
+      "name": "wip_warehouse",
+      "label": "WIP Warehouse",
+      "fieldtype": "Link",
+      "options": "Warehouse",
+      "required": true
+    },
+    {
+      "name": "fg_warehouse",
+      "label": "Finished Goods Warehouse",
+      "fieldtype": "Link",
+      "options": "Warehouse",
+      "required": true
+    },
+    {
+      "name": "status",
+      "label": "Status",
+      "fieldtype": "Select",
+      "options": "Draft\nSubmitted\nIn Progress\nCompleted\nStopped",
+      "default": "Draft"
+    },
+    {
+      "name": "company",
+      "label": "Company",
+      "fieldtype": "Link",
+      "options": "Company",
+      "required": true
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true,
+      "submit": true,
+      "cancel": true
+    }
+  ]
+}

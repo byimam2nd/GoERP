@@ -1,0 +1,40 @@
+{
+  "name": "DocType",
+  "module": "meta",
+  "fields": [
+    {
+      "name": "name",
+      "label": "DocType Name",
+      "fieldtype": "Data",
+      "required": true,
+      "unique": true
+    },
+    {
+      "name": "module",
+      "label": "Module",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "is_submittable",
+      "label": "Is Submittable",
+      "fieldtype": "Check",
+      "default": "0"
+    },
+    {
+      "name": "custom",
+      "label": "Custom",
+      "fieldtype": "Check",
+      "default": "1"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "name": "SalaryStructure",
+  "module": "hr",
+  "fields": [
+    {
+      "name": "employee",
+      "label": "Employee",
+      "fieldtype": "Link",
+      "options": "Employee",
+      "required": true
+    },
+    {
+      "name": "base_pay",
+      "label": "Base Pay",
+      "fieldtype": "Currency",
+      "required": true
+    },
+    {
+      "name": "payroll_payable_account",
+      "label": "Payroll Payable Account",
+      "fieldtype": "Link",
+      "options": "Account",
+      "required": true
+    },
+    {
+      "name": "salary_expense_account",
+      "label": "Salary Expense Account",
+      "fieldtype": "Link",
+      "options": "Account",
+      "required": true
+    },
+    {
+      "name": "company",
+      "label": "Company",
+      "fieldtype": "Link",
+      "options": "Company",
+      "required": true
+    },
+    {
+      "name": "is_active",
+      "label": "Is Active",
+      "fieldtype": "Check",
+      "default": "1"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "name": "WorkflowTransition",
+  "module": "workflow",
+  "fields": [
+    {
+      "name": "parent",
+      "label": "Parent Workflow",
+      "fieldtype": "Link",
+      "options": "Workflow",
+      "required": true
+    },
+    {
+      "name": "state",
+      "label": "State",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "action",
+      "label": "Action",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "next_state",
+      "label": "Next State",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "allowed",
+      "label": "Allowed Role",
+      "fieldtype": "Link",
+      "options": "Role",
+      "required": true
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

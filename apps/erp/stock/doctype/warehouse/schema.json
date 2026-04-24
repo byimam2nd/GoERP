@@ -1,0 +1,35 @@
+{
+  "name": "Warehouse",
+  "module": "stock",
+  "fields": [
+    {
+      "name": "warehouse_name",
+      "label": "Warehouse Name",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "warehouse_type",
+      "label": "Warehouse Type",
+      "fieldtype": "Select",
+      "options": "Store\nTransit\nWork In Progress",
+      "default": "Store"
+    },
+    {
+      "name": "company",
+      "label": "Company",
+      "fieldtype": "Link",
+      "options": "Company",
+      "required": true
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

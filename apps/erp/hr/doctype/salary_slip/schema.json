@@ -1,0 +1,60 @@
+{
+  "name": "SalarySlip",
+  "module": "hr",
+  "is_submittable": true,
+  "fields": [
+    {
+      "name": "employee",
+      "label": "Employee",
+      "fieldtype": "Link",
+      "options": "Employee",
+      "required": true
+    },
+    {
+      "name": "payroll_entry",
+      "label": "Payroll Entry",
+      "fieldtype": "Link",
+      "options": "PayrollEntry"
+    },
+    {
+      "name": "start_date",
+      "label": "Start Date",
+      "fieldtype": "Date"
+    },
+    {
+      "name": "end_date",
+      "label": "End Date",
+      "fieldtype": "Date"
+    },
+    {
+      "name": "gross_pay",
+      "label": "Gross Pay",
+      "fieldtype": "Currency",
+      "required": true
+    },
+    {
+      "name": "net_pay",
+      "label": "Net Pay",
+      "fieldtype": "Currency",
+      "required": true
+    },
+    {
+      "name": "company",
+      "label": "Company",
+      "fieldtype": "Link",
+      "options": "Company",
+      "required": true
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true,
+      "submit": true,
+      "cancel": true
+    }
+  ]
+}

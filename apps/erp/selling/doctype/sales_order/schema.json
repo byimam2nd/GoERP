@@ -1,0 +1,89 @@
+{
+  "name": "SalesOrder",
+  "module": "selling",
+  "is_submittable": true,
+  "fields": [
+    {
+      "name": "customer",
+      "label": "Customer",
+      "fieldtype": "Link",
+      "options": "Customer",
+      "required": true
+    },
+    {
+      "name": "transaction_date",
+      "label": "Date",
+      "fieldtype": "Date",
+      "required": true
+    },
+    {
+      "name": "delivery_date",
+      "label": "Delivery Date",
+      "fieldtype": "Date"
+    },
+    {
+      "name": "company",
+      "label": "Company",
+      "fieldtype": "Link",
+      "options": "Company",
+      "required": true
+    },
+    {
+      "name": "total",
+      "label": "Total",
+      "fieldtype": "Currency",
+      "read_only": true
+    },
+    {
+      "name": "delivered_qty",
+      "label": "Delivered Qty",
+      "fieldtype": "Float",
+      "read_only": true,
+      "default": "0"
+    },
+    {
+      "name": "pending_delivery_qty",
+      "label": "Pending Delivery Qty",
+      "fieldtype": "Float",
+      "read_only": true
+    },
+    {
+      "name": "invoiced_qty",
+      "label": "Invoiced Qty",
+      "fieldtype": "Float",
+      "read_only": true,
+      "default": "0"
+    },
+    {
+      "name": "pending_delivery_qty",
+      "label": "Pending Delivery Qty",
+      "fieldtype": "Float",
+      "read_only": true
+    },
+    {
+      "name": "invoiced_qty",
+      "label": "Invoiced Qty",
+      "fieldtype": "Float",
+      "read_only": true,
+      "default": "0"
+    },
+    {
+      "name": "pending_invoice_qty",
+      "label": "Pending Invoice Qty",
+      "fieldtype": "Float",
+      "read_only": true
+    }
+    ],
+    "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true,
+      "submit": true,
+      "cancel": true
+    }
+    ]
+    }
+

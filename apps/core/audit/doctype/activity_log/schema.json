@@ -1,0 +1,41 @@
+{
+  "name": "ActivityLog",
+  "module": "audit",
+  "fields": [
+    {
+      "name": "user",
+      "label": "User",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "operation",
+      "label": "Operation",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "ip_address",
+      "label": "IP Address",
+      "fieldtype": "Data"
+    },
+    {
+      "name": "log_status",
+      "label": "Status",
+      "fieldtype": "Select",
+      "options": "Success\nFailure"
+    },
+    {
+      "name": "message",
+      "label": "Message",
+      "fieldtype": "Text"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "delete": true
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "name": "PurchaseReceipt",
+  "module": "buying",
+  "is_submittable": true,
+  "fields": [
+    {
+      "name": "supplier",
+      "label": "Supplier",
+      "fieldtype": "Link",
+      "options": "Supplier",
+      "required": true
+    },
+    {
+      "name": "posting_date",
+      "label": "Posting Date",
+      "fieldtype": "Date",
+      "required": true
+    },
+    {
+      "name": "company",
+      "label": "Company",
+      "fieldtype": "Link",
+      "options": "Company",
+      "required": true
+    },
+    {
+      "name": "remarks",
+      "label": "Remarks",
+      "fieldtype": "Text"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true,
+      "submit": true,
+      "cancel": true
+    }
+  ]
+}

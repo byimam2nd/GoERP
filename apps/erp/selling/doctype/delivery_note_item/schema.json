@@ -1,0 +1,45 @@
+{
+  "name": "DeliveryNoteItem",
+  "module": "selling",
+  "fields": [
+    {
+      "name": "parent",
+      "label": "Parent Delivery Note",
+      "fieldtype": "Link",
+      "options": "DeliveryNote",
+      "hidden": 1
+    },
+    {
+      "name": "item_code",
+      "label": "Item Code",
+      "fieldtype": "Link",
+      "options": "Item",
+      "reqd": 1
+    },
+    {
+      "name": "description",
+      "label": "Description",
+      "fieldtype": "Text"
+    },
+    {
+      "name": "qty",
+      "label": "Qty",
+      "fieldtype": "Float",
+      "reqd": 1,
+      "default": "0"
+    },
+    {
+      "name": "rate",
+      "label": "Rate",
+      "fieldtype": "Currency",
+      "reqd": 1,
+      "default": "0"
+    },
+    {
+      "name": "amount",
+      "label": "Amount",
+      "fieldtype": "Currency",
+      "read_only": true
+    }
+  ]
+}

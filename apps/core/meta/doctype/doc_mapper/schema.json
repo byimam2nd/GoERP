@@ -1,0 +1,41 @@
+{
+  "name": "DocMapper",
+  "module": "meta",
+  "fields": [
+    {
+      "name": "mapper_name",
+      "label": "Mapper Name",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "source_doctype",
+      "label": "Source DocType",
+      "fieldtype": "Link",
+      "options": "DocType",
+      "required": true
+    },
+    {
+      "name": "target_doctype",
+      "label": "Target DocType",
+      "fieldtype": "Link",
+      "options": "DocType",
+      "required": true
+    },
+    {
+      "name": "field_map",
+      "label": "Field Map (JSON)",
+      "fieldtype": "Text",
+      "required": true
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

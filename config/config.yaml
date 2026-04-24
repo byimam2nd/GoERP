@@ -1,0 +1,19 @@
+server:
+  port: 8080
+  mode: debug
+  secret_key: "change_this_to_a_long_random_string_in_production"
+
+db:
+  host: localhost
+  port: 5432
+  user: postgres
+  password: password
+  name: goerp
+  sslmode: disable
+
+redis:
+  host: localhost
+  port: 6379
+
+log:
+  level: info

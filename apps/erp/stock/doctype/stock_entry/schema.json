@@ -1,0 +1,55 @@
+{
+  "name": "StockEntry",
+  "module": "stock",
+  "is_submittable": true,
+  "fields": [
+    {
+      "name": "stock_entry_type",
+      "label": "Stock Entry Type",
+      "fieldtype": "Select",
+      "options": "Material Issue\nMaterial Receipt\nMaterial Transfer",
+      "required": true
+    },
+    {
+      "name": "posting_date",
+      "label": "Posting Date",
+      "fieldtype": "Date",
+      "required": true
+    },
+    {
+      "name": "company",
+      "label": "Company",
+      "fieldtype": "Link",
+      "options": "Company",
+      "required": true
+    },
+    {
+      "name": "from_warehouse",
+      "label": "From Warehouse",
+      "fieldtype": "Link",
+      "options": "Warehouse"
+    },
+    {
+      "name": "to_warehouse",
+      "label": "To Warehouse",
+      "fieldtype": "Link",
+      "options": "Warehouse"
+    },
+    {
+      "name": "remarks",
+      "label": "Remarks",
+      "fieldtype": "Text"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true,
+      "submit": true,
+      "cancel": true
+    }
+  ]
+}

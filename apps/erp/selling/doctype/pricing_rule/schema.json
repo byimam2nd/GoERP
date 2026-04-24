@@ -1,0 +1,65 @@
+{
+  "name": "PricingRule",
+  "module": "selling",
+  "fields": [
+    {
+      "name": "title",
+      "label": "Title",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "apply_on",
+      "label": "Apply On",
+      "fieldtype": "Select",
+      "options": "Item Code\nItem Group",
+      "default": "Item Code"
+    },
+    {
+      "name": "item_code",
+      "label": "Item Code",
+      "fieldtype": "Link",
+      "options": "Item"
+    },
+    {
+      "name": "customer_group",
+      "label": "Customer Group",
+      "fieldtype": "Select",
+      "options": "All Customer Groups\nIndividual\nCommercial\nNon Profit\nGovernment",
+      "default": "All Customer Groups"
+    },
+    {
+      "name": "min_qty",
+      "label": "Minimum Qty",
+      "fieldtype": "Float",
+      "default": "0"
+    },
+    {
+      "name": "discount_percentage",
+      "label": "Discount Percentage",
+      "fieldtype": "Float",
+      "default": "0"
+    },
+    {
+      "name": "priority",
+      "label": "Priority",
+      "fieldtype": "Int",
+      "default": "0"
+    },
+    {
+      "name": "is_active",
+      "label": "Is Active",
+      "fieldtype": "Check",
+      "default": "1"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

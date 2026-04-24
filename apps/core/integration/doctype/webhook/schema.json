@@ -1,0 +1,52 @@
+{
+  "name": "Webhook",
+  "module": "integration",
+  "fields": [
+    {
+      "name": "webhook_name",
+      "label": "Webhook Name",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "webhook_doctype",
+      "label": "DocType",
+      "fieldtype": "Link",
+      "options": "DocType",
+      "required": true
+    },
+    {
+      "name": "request_url",
+      "label": "Request URL",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "event",
+      "label": "Event",
+      "fieldtype": "Select",
+      "options": "AfterInsert\nAfterSave\nOnSubmit\nOnCancel\nAfterDelete",
+      "required": true
+    },
+    {
+      "name": "auth_token",
+      "label": "Auth Token",
+      "fieldtype": "Data"
+    },
+    {
+      "name": "is_active",
+      "label": "Is Active",
+      "fieldtype": "Check",
+      "default": "1"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

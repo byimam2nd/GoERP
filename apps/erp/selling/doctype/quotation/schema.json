@@ -1,0 +1,46 @@
+{
+  "name": "Quotation",
+  "module": "selling",
+  "fields": [
+    {
+      "name": "customer",
+      "label": "Customer",
+      "fieldtype": "Link",
+      "options": "Customer",
+      "required": true
+    },
+    {
+      "name": "transaction_date",
+      "label": "Date",
+      "fieldtype": "Date",
+      "required": true
+    },
+    {
+      "name": "valid_till",
+      "label": "Valid Till",
+      "fieldtype": "Date"
+    },
+    {
+      "name": "company",
+      "label": "Company",
+      "fieldtype": "Link",
+      "options": "Company",
+      "required": true
+    },
+    {
+      "name": "total",
+      "label": "Total",
+      "fieldtype": "Currency",
+      "read_only": true
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

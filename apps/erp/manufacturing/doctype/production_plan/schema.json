@@ -1,0 +1,38 @@
+{
+  "name": "ProductionPlan",
+  "module": "manufacturing",
+  "is_submittable": true,
+  "fields": [
+    {
+      "name": "posting_date",
+      "label": "Date",
+      "fieldtype": "Date",
+      "required": true
+    },
+    {
+      "name": "company",
+      "label": "Company",
+      "fieldtype": "Link",
+      "options": "Company",
+      "required": true
+    },
+    {
+      "name": "status",
+      "label": "Status",
+      "fieldtype": "Select",
+      "options": "Draft\nSubmitted\nCompleted\nCancelled",
+      "default": "Draft"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true,
+      "submit": true,
+      "cancel": true
+    }
+  ]
+}

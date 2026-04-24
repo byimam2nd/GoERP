@@ -1,0 +1,81 @@
+{
+  "name": "PaymentEntry",
+  "module": "accounting",
+  "is_submittable": true,
+  "fields": [
+    {
+      "name": "payment_type",
+      "label": "Payment Type",
+      "fieldtype": "Select",
+      "options": "Receive\nPay\nInternal Transfer",
+      "default": "Receive"
+    },
+    {
+      "name": "posting_date",
+      "label": "Posting Date",
+      "fieldtype": "Date",
+      "required": true
+    },
+    {
+      "name": "party_type",
+      "label": "Party Type",
+      "fieldtype": "Select",
+      "options": "Customer\nSupplier",
+      "required": true
+    },
+    {
+      "name": "party",
+      "label": "Party",
+      "fieldtype": "Link",
+      "options": "Customer",
+      "required": true
+    },
+    {
+      "name": "paid_to",
+      "label": "Bank/Cash Account",
+      "fieldtype": "Link",
+      "options": "Account",
+      "required": true
+    },
+    {
+      "name": "paid_amount",
+      "label": "Paid Amount",
+      "fieldtype": "Currency",
+      "required": true
+    },
+    {
+      "name": "write_off_amount",
+      "label": "Write Off Amount",
+      "fieldtype": "Currency",
+      "default": "0"
+    },
+    {
+      "name": "write_off_account",
+      "label": "Write Off Account",
+      "fieldtype": "Link",
+      "options": "Account"
+    },
+    {
+      "name": "reference_no",
+      "label": "Reference No",
+      "fieldtype": "Data"
+    },
+    {
+      "name": "references",
+      "label": "Payment References",
+      "fieldtype": "Table",
+      "options": "PaymentReference"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true,
+      "submit": true,
+      "cancel": true
+    }
+  ]
+}

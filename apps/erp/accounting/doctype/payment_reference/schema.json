@@ -1,0 +1,39 @@
+{
+  "name": "PaymentReference",
+  "module": "accounting",
+  "is_child_table": true,
+  "fields": [
+    {
+      "name": "reference_doctype",
+      "label": "Reference DocType",
+      "fieldtype": "Select",
+      "options": "Sales Invoice\nPurchase Invoice",
+      "required": true
+    },
+    {
+      "name": "reference_name",
+      "label": "Reference Name",
+      "fieldtype": "Dynamic Link",
+      "options": "reference_doctype",
+      "required": true
+    },
+    {
+      "name": "total_amount",
+      "label": "Total Amount",
+      "fieldtype": "Currency",
+      "read_only": true
+    },
+    {
+      "name": "outstanding_amount",
+      "label": "Outstanding Amount",
+      "fieldtype": "Currency",
+      "read_only": true
+    },
+    {
+      "name": "allocated_amount",
+      "label": "Allocated Amount",
+      "fieldtype": "Currency",
+      "required": true
+    }
+  ]
+}

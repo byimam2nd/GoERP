@@ -1,0 +1,53 @@
+{
+  "name": "Item",
+  "module": "stock",
+  "fields": [
+    {
+      "name": "item_code",
+      "label": "Item Code",
+      "fieldtype": "Data",
+      "required": true,
+      "unique": true
+    },
+    {
+      "name": "item_name",
+      "label": "Item Name",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "item_group",
+      "label": "Item Group",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "stock_uom",
+      "label": "Stock UOM",
+      "fieldtype": "Data",
+      "default": "Nos"
+    },
+    {
+      "name": "is_stock_item",
+      "label": "Is Stock Item",
+      "fieldtype": "Check",
+      "default": "1"
+    },
+    {
+      "name": "valuation_method",
+      "label": "Valuation Method",
+      "fieldtype": "Select",
+      "options": "FIFO\nMoving Average\nManual",
+      "default": "FIFO"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

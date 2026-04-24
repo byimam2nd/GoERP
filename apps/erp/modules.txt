@@ -1,0 +1,6 @@
+base
+selling
+buying
+stockaccounting
+hr
+manufacturing

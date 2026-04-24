@@ -1,0 +1,66 @@
+{
+  "name": "Account",
+  "module": "accounting",
+  "is_tree": true,
+  "fields": [
+    {
+      "name": "account_name",
+      "label": "Account Name",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "name": "account_number",
+      "label": "Account Number",
+      "fieldtype": "Data"
+    },
+    {
+      "name": "root_type",
+      "label": "Root Type",
+      "fieldtype": "Select",
+      "options": "Asset\nLiability\nEquity\nIncome\nExpense",
+      "required": true
+    },
+    {
+      "name": "report_type",
+      "label": "Report Type",
+      "fieldtype": "Select",
+      "options": "Balance Sheet\nProfit and Loss",
+      "required": true
+    },
+    {
+      "name": "is_group",
+      "label": "Is Group",
+      "fieldtype": "Check",
+      "default": "0"
+    },
+    {
+      "name": "parent_account",
+      "label": "Parent Account",
+      "fieldtype": "Link",
+      "options": "Account"
+    },
+    {
+      "name": "company",
+      "label": "Company",
+      "fieldtype": "Link",
+      "options": "Company",
+      "required": true
+    },
+    {
+      "name": "account_currency",
+      "label": "Account Currency",
+      "fieldtype": "Link",
+      "options": "Currency"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "name": "BOMItem",
+  "module": "manufacturing",
+  "fields": [
+    {
+      "name": "parent",
+      "label": "Parent BOM",
+      "fieldtype": "Link",
+      "options": "BOM",
+      "required": true
+    },
+    {
+      "name": "item_code",
+      "label": "Item Code",
+      "fieldtype": "Link",
+      "options": "Item",
+      "required": true
+    },
+    {
+      "name": "qty",
+      "label": "Quantity",
+      "fieldtype": "Float",
+      "default": "1"
+    },
+    {
+      "name": "uom",
+      "label": "UOM",
+      "fieldtype": "Data"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Administrator",
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": true
+    }
+  ]
+}
