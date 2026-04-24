@@ -1,56 +1,64 @@
 package service
 
 import (
+	"fmt"
 	"github.com/goerp/goerp/apps/core/database"
-	"time"
 )
 
-type LedgerEntryDetail struct {
-	PostingDate time.Time `json:"posting_date"`
-	VoucherType string    `json:"voucher_type"`
-	VoucherNo   string    `json:"voucher_no"`
-	Against     string    `json:"against"`
-	Debit       float64   `json:"debit"`
-	Credit      float64   `json:"credit"`
-	Balance     float64   `json:"balance"`
-	Remarks     string    `json:"remarks"`
+type FinancialNarrative struct {
+	Account   string `json:"account"`
+	Balance   float64 `json:"balance"`
+	Trace     []TraceNode `json:"trace"`
 }
 
-type AccountExplanation struct {
-	AccountName    string              `json:"account_name"`
-	OpeningBalance float64             `json:"opening_balance"`
-	Entries        []LedgerEntryDetail `json:"entries"`
-	ClosingBalance float64             `json:"closing_balance"`
+type TraceNode struct {
+	VoucherNo       string    `json:"voucher_no"`
+	VoucherType     string    `json:"voucher_type"`
+	Amount          float64   `json:"amount"`
+	SourceDoc       string    `json:"source_doc,omitempty"`
+	SystemTimestamp time.Time `json:"system_timestamp"` // Forensic: Real insertion time
 }
 
-// ExplainAccountBalance provide a detailed audit trail of an account balance
-func ExplainAccountBalance(tenantID, company, account string, start, end time.Time) (*AccountExplanation, error) {
-	// 1. Calculate Opening Balance
-	var opening float64
-	database.DB.Table("tabGLEntry").
-		Select("SUM(debit - credit)").
-		Where("tenant_id = ? AND company = ? AND account = ? AND posting_date < ? AND docstatus = 1", tenantID, company, account, start).
-		Scan(&opening)
+// GetForensicBalance mengambil saldo akun pada titik waktu sistem tertentu (as-of timestamp).
+func GetForensicBalance(tenantID string, accountName string, asOfSystem time.Time) (float64, error) {
+	var balance float64
+	// Query ini mengabaikan transaksi yang di-input backdated SETELAH asOfSystem
+	err := database.DB.Table("tabGLEntry").
+		Where("tenant_id = ? AND account = ? AND creation <= ?", tenantID, accountName, asOfSystem).
+		Select("SUM(debit - credit)").Scan(&balance).Error
+	return balance, err
+}
 
-	// 2. Fetch Entries within period
-	var entries []LedgerEntryDetail
-	database.DB.Table("tabGLEntry").
-		Select("posting_date, voucher_type, voucher_no, against, debit, credit, remarks").
-		Where("tenant_id = ? AND company = ? AND account = ? AND posting_date BETWEEN ? AND ? AND docstatus = 1", tenantID, company, account, start, end).
-		Order("posting_date ASC, creation ASC").
-		Scan(&entries)
-
-	// 3. Compute running balance
-	runningBalance := opening
-	for i := range entries {
-		runningBalance += (entries[i].Debit - entries[i].Credit)
-		entries[i].Balance = runningBalance
+// GetNarrativeTrace membangun silsilah angka finansial untuk auditor.
+func GetNarrativeTrace(tenantID string, accountName string) (FinancialNarrative, error) {
+	var entries []struct {
+		VoucherNo   string
+		VoucherType string
+		Amount      float64
 	}
 
-	return &AccountExplanation{
-		AccountName:    account,
-		OpeningBalance: opening,
-		Entries:        entries,
-		ClosingBalance: runningBalance,
-	}, nil
+	// 1. Ambil Jurnal
+	database.DB.Table("tabGLEntry").
+		Where("tenant_id = ? AND account = ? AND docstatus = 1", tenantID, accountName).
+		Select("voucher_no, voucher_type, (debit - credit) as amount").
+		Scan(&entries)
+
+	narrative := FinancialNarrative{Account: accountName}
+	for _, e := range entries {
+		// 2. Untuk setiap jurnal, cari dokumen sumbernya (Lineage)
+		var source string
+		database.DB.Table("tabDocLink").
+			Where("tenant_id = ? AND child_name = ?", tenantID, e.VoucherNo).
+			Select("parent_name").Limit(1).Scan(&source)
+
+		narrative.Trace = append(narrative.Trace, TraceNode{
+			VoucherNo:   e.VoucherNo,
+			VoucherType: e.VoucherType,
+			Amount:      e.Amount,
+			SourceDoc:   source,
+		})
+		narrative.Balance += e.Amount
+	}
+
+	return narrative, nil
 }

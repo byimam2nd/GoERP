@@ -1,85 +1,70 @@
 package service
 
 import (
+	"fmt"
 	"github.com/goerp/goerp/apps/core/database"
 	"time"
 )
 
 type AgingBucket struct {
-	Range       string  `json:"range"`
-	Amount      float64 `json:"amount"`
-	Outstanding float64 `json:"outstanding"`
+	Range      string  `json:"range"`
+	Amount     float64 `json:"amount"`
 }
 
-type PartyAging struct {
-	PartyName   string        `json:"party_name"`
-	Total       float64       `json:"total"`
-	Outstanding float64       `json:"outstanding"`
-	Buckets     []AgingBucket `json:"buckets"`
+type AgingResult struct {
+	Party      string        `json:"party"`
+	Total      float64       `json:"total"`
+	Buckets    []AgingBucket `json:"buckets"`
 }
 
-// GetAgingReport calculates aging for Sales Invoices (Receivable) or Purchase Invoices (Payable)
-func GetAgingReport(tenantID, company, partyType string, asOfDate time.Time) ([]PartyAging, error) {
-	var results []PartyAging
-
+// GetAgingReport menghitung outstanding AR/AP berdasarkan umur piutang/hutang.
+func GetAgingReport(tenantID string, partyType string, partyName string) (AgingResult, error) {
+	// partyType: "Customer" (AR) or "Supplier" (AP)
 	tableName := "tabSalesInvoice"
-	partyField := "customer"
 	if partyType == "Supplier" {
 		tableName = "tabPurchaseInvoice"
-		partyField = "supplier"
 	}
 
-	// 1. Fetch all outstanding invoices
-	var invoices []map[string]interface{}
+	var results []struct {
+		Name              string
+		OutstandingAmount float64
+		PostingDate       time.Time
+	}
+
 	err := database.DB.Table(tableName).
-		Where("tenant_id = ? AND company = ? AND outstanding_amount > 0 AND docstatus = 1 AND posting_date <= ?", tenantID, company, asOfDate).
-		Find(&invoices).Error
-	
+		Select("name, outstanding_amount, posting_date").
+		Where("tenant_id = ? AND outstanding_amount > 0 AND status != 'Paid'", tenantID).
+		Scan(&results).Error
+
 	if err != nil {
-		return nil, err
+		return AgingResult{}, err
 	}
 
-	// Group by Party
-	partyInvoices := make(map[string][]map[string]interface{})
-	for _, inv := range invoices {
-		p := inv[partyField].(string)
-		partyInvoices[p] = append(partyInvoices[p], inv)
+	now := time.Now()
+	aging := AgingResult{
+		Party:   partyName,
+		Buckets: []AgingBucket{
+			{Range: "0-30 days", Amount: 0},
+			{Range: "31-60 days", Amount: 0},
+			{Range: "61-90 days", Amount: 0},
+			{Range: "90+ days", Amount: 0},
+		},
 	}
 
-	// 2. Process each party
-	for party, invs := range partyInvoices {
-		aging := PartyAging{
-			PartyName: party,
-			Buckets: []AgingBucket{
-				{Range: "0-30 days"},
-				{Range: "31-60 days"},
-				{Range: "61-90 days"},
-				{Range: "Over 90 days"},
-			},
+	for _, r := range results {
+		days := int(now.Sub(r.PostingDate).Hours() / 24)
+		aging.Total += r.OutstandingAmount
+
+		if days <= 30 {
+			aging.Buckets[0].Amount += r.OutstandingAmount
+		} else if days <= 60 {
+			aging.Buckets[1].Amount += r.OutstandingAmount
+		} else if days <= 90 {
+			aging.Buckets[2].Amount += r.OutstandingAmount
+		} else {
+			aging.Buckets[3].Amount += r.OutstandingAmount
 		}
-
-		for _, inv := range invs {
-			dueDateStr := inv["due_date"].(string)
-			dueDate, _ := time.Parse("2006-01-02", dueDateStr)
-			outstanding := inv["outstanding_amount"].(float64)
-
-			daysOverdue := int(asOfDate.Sub(dueDate).Hours() / 24)
-
-			if daysOverdue <= 30 {
-				aging.Buckets[0].Amount += outstanding
-			} else if daysOverdue <= 60 {
-				aging.Buckets[1].Amount += outstanding
-			} else if daysOverdue <= 90 {
-				aging.Buckets[2].Amount += outstanding
-			} else {
-				aging.Buckets[3].Amount += outstanding
-			}
-
-			aging.Outstanding += outstanding
-			aging.Total += inv["grand_total"].(float64)
-		}
-		results = append(results, aging)
 	}
 
-	return results, nil
+	return aging, nil
 }

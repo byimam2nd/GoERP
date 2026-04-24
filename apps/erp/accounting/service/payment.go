@@ -3,124 +3,88 @@ package service
 import (
 	"fmt"
 	"github.com/goerp/goerp/apps/core/database"
-	"time"
+	"gorm.io/gorm"
 )
 
 type PaymentReference struct {
-	ReferenceDocType string  `json:"reference_doctype"`
+	ReferenceDoctype string  `json:"reference_doctype"`
 	ReferenceName    string  `json:"reference_name"`
 	AllocatedAmount  float64 `json:"allocated_amount"`
+	WriteOffAmount   float64 `json:"write_off_amount"`
+	WriteOffAccount  string  `json:"write_off_account"`
 }
 
-type PaymentRequest struct {
-	Name            string             `json:"name"`
-	PaymentType     string             `json:"payment_type"` // Receive, Pay
-	PostingDate     time.Time          `json:"posting_date"`
-	PartyType       string             `json:"party_type"` // Customer, Supplier
-	Party           string             `json:"party"`
-	PaidTo          string             `json:"paid_to"` // Bank/Cash Account
-	PaidAmount      float64            `json:"paid_amount"`
-	WriteOffAmount  float64            `json:"write_off_amount"`
-	WriteOffAccount string             `json:"write_off_account"`
-	References      []PaymentReference `json:"references"`
-	TenantID        string             `json:"tenant_id"`
-}
+// ProcessPayment melunasi invoice dan mengupdate status outstanding serta menangani write-off.
+func ProcessPayment(tenantID string, paymentDoc map[string]interface{}, references []PaymentReference) error {
+	return database.DB.Transaction(func(tx *gorm.DB) error {
+		paymentNo := paymentDoc["name"].(string)
 
-// ProcessPayment handles the financial logic of a payment
-func ProcessPayment(req PaymentRequest) error {
-	tx := database.DB.Begin()
-
-	// 1. Validate total allocation
-	var totalAllocated float64
-	for _, ref := range req.References {
-		totalAllocated += ref.AllocatedAmount
-	}
-
-	// Total allocated + Write-off must equal Paid Amount (conceptually)
-	// In some ERPs: PaidAmount = TotalAllocated - WriteOff
-	// We'll follow: Total Impact on Party = PaidAmount + WriteOff
-	totalImpact := req.PaidAmount + req.WriteOffAmount
-
-	var glEntries []GLEntry
-
-	// 2. Party Account (Receivable/Payable)
-	// Need to find the default receivable/payable account for the party
-	// For this MVP, we'll assume we can fetch it or it's provided. 
-	// Let's assume a simplified fetch:
-	var partyAccount string
-	tx.Table("tabAccount").
-		Where("tenant_id = ? AND account_type = ? AND is_group = 0", req.TenantID, req.PartyType).
-		Select("name").Limit(1).Scan(&partyAccount)
-
-	partyEntry := GLEntry{
-		Account:     partyAccount,
-		PostingDate: req.PostingDate,
-		VoucherType: "PaymentEntry",
-		VoucherNo:   req.Name,
-	}
-
-	bankEntry := GLEntry{
-		Account:     req.PaidTo,
-		PostingDate: req.PostingDate,
-		VoucherType: "PaymentEntry",
-		VoucherNo:   req.Name,
-	}
-
-	if req.PaymentType == "Receive" {
-		// Money comes in: Debit Bank, Credit Receivable
-		bankEntry.Debit = req.PaidAmount
-		partyEntry.Credit = totalImpact
-		
-		if req.WriteOffAmount > 0 {
-			writeOffEntry := GLEntry{
-				Account:     req.WriteOffAccount,
-				PostingDate: req.PostingDate,
-				VoucherType: "PaymentEntry",
-				VoucherNo:   req.Name,
-				Debit:       req.WriteOffAmount, // Expense
+		for _, ref := range references {
+			totalToClear := ref.AllocatedAmount + ref.WriteOffAmount
+			if totalToClear <= 0 {
+				continue
 			}
-			glEntries = append(glEntries, writeOffEntry)
-		}
-	} else {
-		// Money goes out: Credit Bank, Debit Payable
-		bankEntry.Credit = req.PaidAmount
-		partyEntry.Debit = totalImpact
 
-		if req.WriteOffAmount > 0 {
-			writeOffEntry := GLEntry{
-				Account:     req.WriteOffAccount,
-				PostingDate: req.PostingDate,
-				VoucherType: "PaymentEntry",
-				VoucherNo:   req.Name,
-				Credit:      req.WriteOffAmount, // Gain/Income (usually) or reducing expense
+			// 1. Update Outstanding di Invoice
+			tableName := "tab" + ref.ReferenceDoctype
+			var outstanding float64
+			tx.Table(tableName).Where("name = ? AND tenant_id = ?", ref.ReferenceName, tenantID).Select("outstanding_amount").Scan(&outstanding)
+
+			newOutstanding := outstanding - totalToClear
+			if newOutstanding < -0.01 { // Allow tiny margin for rounding
+				return fmt.Errorf("Overpayment on %s: %s", ref.ReferenceDoctype, ref.ReferenceName)
 			}
-			glEntries = append(glEntries, writeOffEntry)
+
+			updateData := map[string]interface{}{
+				"outstanding_amount": newOutstanding,
+			}
+			if newOutstanding <= 0 {
+				updateData["status"] = "Paid"
+				updateData["outstanding_amount"] = 0
+			}
+
+			if err := tx.Table(tableName).Where("name = ? AND tenant_id = ?", ref.ReferenceName, tenantID).Updates(updateData).Error; err != nil {
+				return err
+			}
+
+			// 2. Handle Write-off (Jika ada)
+			if ref.WriteOffAmount != 0 {
+				writeOffEntries := []GLEntry{
+					{
+						Account:      ref.WriteOffAccount,
+						Debit:        ref.WriteOffAmount,
+						Credit:       0,
+						VoucherType:  "Payment Entry",
+						VoucherNo:    paymentNo,
+						Remarks:      fmt.Sprintf("Write-off for %s", ref.ReferenceName),
+					},
+					{
+						Account:      "Accounts Receivable", // Target AR Account
+						Debit:        0,
+						Credit:       ref.WriteOffAmount,
+						VoucherType:  "Payment Entry",
+						VoucherNo:    paymentNo,
+						Remarks:      fmt.Sprintf("Write-off Adjustment for %s", ref.ReferenceName),
+					},
+				}
+				if err := PostGLEntries(tx, writeOffEntries, tenantID); err != nil {
+					return err
+				}
+			}
+
+			// 2. Simpan Relasi Rekonsiliasi (tabPaymentReference)
+			refData := map[string]interface{}{
+				"tenant_id":         tenantID,
+				"parent":            paymentNo,
+				"reference_doctype": ref.ReferenceDoctype,
+				"reference_name":    ref.ReferenceName,
+				"allocated_amount":  ref.AllocatedAmount,
+			}
+			if err := tx.Table("tabPaymentReference").Create(refData).Error; err != nil {
+				return err
+			}
 		}
-	}
 
-	glEntries = append(glEntries, bankEntry, partyEntry)
-
-	// 3. Post GL Entries
-	if err := PostGLEntries(tx, glEntries, req.TenantID); err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	// 4. Update Outstanding Amounts on Invoices
-	for _, ref := range req.References {
-		table := "tabSalesInvoice"
-		if ref.ReferenceDocType == "Purchase Invoice" {
-			table = "tabPurchaseInvoice"
-		}
-
-		updateSQL := fmt.Sprintf(`UPDATE %s SET outstanding_amount = outstanding_amount - ? 
-					 WHERE name = ? AND tenant_id = ?`, table)
-		
-		if err := tx.Exec(updateSQL, ref.AllocatedAmount, ref.ReferenceName, req.TenantID).Error; err != nil {
-			tx.Rollback()
-			return fmt.Errorf("failed to update outstanding for %s: %v", ref.ReferenceName, err)
-		}
-	}
-
-	return tx.Commit().Error
+		return nil
+	})
 }

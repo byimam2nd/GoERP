@@ -1,97 +1,80 @@
 package service
 
 import (
+	"context"
 	"fmt"
 	"github.com/goerp/goerp/apps/core/database"
+	"gorm.io/gorm"
 	"time"
 )
 
-type ClosingRequest struct {
-	FiscalYear      string    `json:"fiscal_year"`
-	ClosingDate     time.Time `json:"closing_date"`
-	RetainedEarnings string    `json:"retained_earnings_account"`
-	Company         string    `json:"company"`
-	TenantID        string    `json:"tenant_id"`
-}
-
-// ClosePeriod zeroes out P&L accounts and transfers balance to Retained Earnings
-func ClosePeriod(req ClosingRequest) error {
-	tx := database.DB.Begin()
-
-	// 1. Fetch P&L Accounts and their Balances
-	var plBalances []map[string]interface{}
-	// Join Account with AccountBalance to get only Income/Expense
-	query := `SELECT b.account, b.balance 
-			  FROM "tabAccountBalance" b
-			  JOIN "tabAccount" a ON a.name = b.account AND a.tenant_id = b.tenant_id
-			  WHERE a.root_type IN ('Income', 'Expense') 
-			  AND a.company = ? AND a.tenant_id = ?`
-	
-	if err := tx.Raw(query, req.Company, req.TenantID).Scan(&plBalances).Error; err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	var glEntries []GLEntry
-	var totalPLBalance float64
-
-	// 2. Create Reversing Entries for each P&L Account
-	voucherNo := fmt.Sprintf("CLOSE-%s", req.FiscalYear)
-	for _, b := range plBalances {
-		acc := b["account"].(string)
-		balance := b["balance"].(float64)
-		if balance == 0 { continue }
-
-		entry := GLEntry{
-			Account:     acc,
-			PostingDate: req.ClosingDate,
-			VoucherType: "PeriodClosingVoucher",
-			VoucherNo:   voucherNo,
+// CloseFiscalYear melakukan penutupan tahun buku:
+// 1. Menghitung Laba/Rugi dari akun Income & Expense.
+// 2. Memindahkan saldo ke Retained Earnings.
+// 3. Mengunci periode tersebut.
+func CloseFiscalYear(ctx context.Context, tenantID string, fiscalYearName string, retainedEarningsAccount string) error {
+	return database.DB.Transaction(func(tx *gorm.DB) error {
+		// 1. Ambil info Fiscal Year
+		var fy struct {
+			YearStartDate time.Time
+			YearEndDate   time.Time
+			IsClosed      bool
+		}
+		if err := tx.Table("tabFiscalYear").Where("name = ? AND tenant_id = ?", fiscalYearName, tenantID).First(&fy).Error; err != nil {
+			return fmt.Errorf("fiscal year not found: %v", err)
+		}
+		if fy.IsClosed {
+			return fmt.Errorf("fiscal year is already closed")
 		}
 
-		if balance > 0 {
-			// Current is Debit (usually Expense), so we Credit it
-			entry.Credit = balance
-		} else {
-			// Current is Credit (usually Income), so we Debit it
-			entry.Debit = -balance
+		// 2. Hitung Total Revenue & Expense
+		var plBalance float64
+		// Asumsi: Akun Income memiliki root_type 'Asset' atau 'Liability' tertentu, 
+		// di GoERP kita filter berdasarkan report_type 'Profit and Loss'
+		query := `
+			SELECT SUM(debit - credit) 
+			FROM tabGLEntry 
+			WHERE tenant_id = ? 
+			AND posting_date BETWEEN ? AND ?
+			AND account IN (SELECT name FROM tabAccount WHERE report_type = 'Profit and Loss')
+		`
+		tx.Raw(query, tenantID, fy.YearStartDate, fy.YearEndDate).Scan(&plBalance)
+
+		if plBalance == 0 {
+			return fmt.Errorf("no balance to close for this period")
 		}
-		
-		glEntries = append(glEntries, entry)
-		totalPLBalance += balance
-	}
 
-	// 3. Post to Retained Earnings (The balancing entry)
-	if totalPLBalance != 0 {
-		reEntry := GLEntry{
-			Account:     req.RetainedEarnings,
-			PostingDate: req.ClosingDate,
-			VoucherType: "PeriodClosingVoucher",
-			VoucherNo:   voucherNo,
+		// 3. Buat Closing Entry (Pindah ke Retained Earnings)
+		// Jika plBalance negatif (Credit > Debit) -> Profit
+		// Jika plBalance positif (Debit > Credit) -> Loss
+		entries := []GLEntry{
+			{
+				Account:      retainedEarningsAccount,
+				Debit:        0,
+				Credit:       -plBalance, // Jika profit, Credit Retained Earnings
+				VoucherType:  "Period Closing",
+				VoucherNo:    fmt.Sprintf("CLOSE-%s", fiscalYearName),
+				PostingDate:  fy.YearEndDate,
+				Remarks:      "Closing of Profit/Loss to Retained Earnings",
+			},
+			{
+				Account:      "P&L Summary", // Akun sementara untuk kliring
+				Debit:        plBalance,
+				Credit:       0,
+				VoucherType:  "Period Closing",
+				VoucherNo:    fmt.Sprintf("CLOSE-%s", fiscalYearName),
+				PostingDate:  fy.YearEndDate,
+				Remarks:      "P&L Summary Clearing",
+			},
 		}
-		if totalPLBalance > 0 {
-			// Net Loss: Debit Retained Earnings
-			reEntry.Debit = totalPLBalance
-		} else {
-			// Net Profit: Credit Retained Earnings
-			reEntry.Credit = -totalPLBalance
+
+		if err := PostGLEntries(tx, entries, tenantID); err != nil {
+			return err
 		}
-		glEntries = append(glEntries, reEntry)
-	}
 
-	// 4. Use existing PostGLEntries within this transaction
-	if err := PostGLEntries(tx, glEntries, req.TenantID); err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	// 5. Mark Fiscal Year as Closed
-	if err := tx.Table("tabFiscalYear").
-		Where("year = ? AND tenant_id = ?", req.FiscalYear, req.TenantID).
-		Update("is_closed", true).Error; err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	return tx.Commit().Error
+		// 4. Kunci Fiscal Year
+		return tx.Table("tabFiscalYear").
+			Where("name = ? AND tenant_id = ?", fiscalYearName, tenantID).
+			Update("is_closed", true).Error
+	})
 }

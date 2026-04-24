@@ -60,21 +60,23 @@ func PostGLEntries(db *gorm.DB, entries []GLEntry, tenantID string) error {
 		return fmt.Errorf("GL Unbalanced: Debit (%.2f) != Credit (%.2f)", totalDebit, totalCredit)
 	}
 
-	// 2. Period Locking Validation
+	// 2. Period Locking Validation (The Fiscal Guard)
 	for _, e := range entries {
+		if e.VoucherNo == "" {
+			return fmt.Errorf("Explainability Error: Every GL Entry must have a VoucherNo")
+		}
+
 		var fiscalYear struct {
 			IsClosed bool
 		}
+		// Cek apakah tanggal transaksi berada di periode yang sudah dikunci
 		err := db.Table("tabFiscalYear").
 			Select("is_closed").
 			Where("tenant_id = ? AND ? BETWEEN year_start_date AND year_end_date", tenantID, e.PostingDate).
 			Scan(&fiscalYear).Error
 		
-		if err != nil {
-			return fmt.Errorf("failed to check fiscal year for date %v: %v", e.PostingDate, err)
-		}
-		if fiscalYear.IsClosed {
-			return fmt.Errorf("cannot post to closed fiscal year for date %v", e.PostingDate)
+		if err == nil && fiscalYear.IsClosed {
+			return fmt.Errorf("Fiscal Guard: Period for date %s is CLOSED. Cannot post entries.", e.PostingDate.Format("2006-01-02"))
 		}
 	}
 
@@ -111,6 +113,67 @@ func PostGLEntries(db *gorm.DB, entries []GLEntry, tenantID string) error {
 			tx.Rollback()
 			return fmt.Errorf("failed to update balance for %s: %v", e.Account, err)
 		}
+	}
+
+func ReverseGLEntries(db *gorm.DB, voucherType string, voucherNo string, tenantID string) error {
+	if db == nil {
+		db = database.DB
+	}
+
+	// 1. Check for Active Dependencies before reversing
+	var activeDependencies []struct {
+		ChildDT   string
+		ChildName string
+	}
+	db.Table("tabDocLink").
+		Where("tenant_id = ? AND parent_name = ? AND docstatus = 1", tenantID, voucherNo).
+		Scan(&activeDependencies)
+
+	if len(activeDependencies) > 0 {
+		return fmt.Errorf("Integrity Error: Cannot reverse %s %s. Active dependencies found: %v", 
+			voucherType, voucherNo, activeDependencies)
+	}
+
+	var originalEntries []GLEntry
+	err := db.Table("tabGLEntry").
+		Where("tenant_id = ? AND voucher_type = ? AND voucher_no = ? AND docstatus = 1", tenantID, voucherType, voucherNo).
+		Find(&originalEntries).Error
+	if err != nil {
+		return err
+	}
+
+	if len(originalEntries) == 0 {
+		return nil 
+	}
+
+	tx := db.Begin()
+	
+	// Mark original as cancelled (docstatus = 2)
+	if err := tx.Table("tabGLEntry").
+		Where("tenant_id = ? AND voucher_type = ? AND voucher_no = ?", tenantID, voucherType, voucherNo).
+		Update("docstatus", 2).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// Create and post reverse entries
+	var reverseEntries []GLEntry
+	for _, e := range originalEntries {
+		reverseEntries = append(reverseEntries, GLEntry{
+			Account:      e.Account,
+			PostingDate:  time.Now(),
+			Debit:        e.Credit,   
+			Credit:       e.Debit,
+			Against:      e.Against,
+			VoucherType:  e.VoucherType,
+			VoucherNo:    e.VoucherNo,
+			Remarks:      fmt.Sprintf("Cancellation Reversal: %s", e.VoucherNo),
+		})
+	}
+
+	if err := PostGLEntries(tx, reverseEntries, tenantID); err != nil {
+		tx.Rollback()
+		return err
 	}
 
 	return tx.Commit().Error

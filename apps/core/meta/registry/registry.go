@@ -111,8 +111,37 @@ func (r *Registry) Get(name string, tenantID string) (*types.DocType, bool) {
 func (r *Registry) ClearCache(name string, tenantID string) {
 	cacheKey := fmt.Sprintf("goerp:meta:%s:%s", tenantID, name)
 	if database.Redis != nil {
-		database.Redis.Del(context.Background(), cacheKey)
+		ctx := context.Background()
+		database.Redis.Del(ctx, cacheKey)
+		
+		// V2: Publish invalidation event to all nodes
+		invalidationEvent := map[string]string{
+			"doctype":   name,
+			"tenant_id": tenantID,
+			"action":    "invalidate",
+		}
+		msg, _ := json.Marshal(invalidationEvent)
+		database.Redis.Publish(ctx, "goerp:meta_invalidation", msg)
 	}
+}
+
+// SubscribeToInvalidations dijalankan oleh setiap node server saat startup
+func (r *Registry) SubscribeToInvalidations() {
+	if database.Redis == nil { return }
+	pubsub := database.Redis.Subscribe(context.Background(), "goerp:meta_invalidation")
+	
+	go func() {
+		for msg := range pubsub.Channel() {
+			var event map[string]string
+			if err := json.Unmarshal([]byte(msg.Payload), &event); err == nil {
+				// Hapus cache lokal di memori instance ini
+				r.mu.Lock()
+				delete(r.doctypes, event["doctype"])
+				r.mu.Unlock()
+				// Instance ini sekarang akan fetch data segar dari DB saat dipanggil
+			}
+		}
+	}()
 }
 
 func (r *Registry) GetAll() []*types.DocType {

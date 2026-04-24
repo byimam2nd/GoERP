@@ -1,93 +1,70 @@
 package service
 
 import (
+	"context"
 	"fmt"
 	"github.com/goerp/goerp/apps/core/database"
 )
 
-type DocumentLink struct {
-	ParentDocType string
-	ParentName    string
-	ChildDocType  string
-	ChildName     string
-	ItemCode      string
-	Qty           float64
+// GetCompanyDefaultAccount mengambil akun default (misal: Receivable, Payable, Income) dari metadata Company.
+func GetCompanyDefaultAccount(tenantID string, companyName string, fieldName string) (string, error) {
+	var accountName string
+	err := database.DB.Table("tabCompany").
+		Where("name = ? AND tenant_id = ?", companyName, tenantID).
+		Select(fieldName).Scan(&accountName).Error
+	
+	if err != nil || accountName == "" {
+		return "", fmt.Errorf("default account %s not configured for company %s", fieldName, companyName)
+	}
+	return accountName, nil
 }
 
-// UpdateLifecycleStatus updates pending quantities and status across document chains
-func UpdateLifecycleStatus(link DocumentLink, tenantID string) error {
-	tx := database.DB.Begin()
-
-	// Example logic for Sales Order -> Sales Invoice
-	// We need to update 'invoiced_qty' in Sales Order Item
-	if link.ParentDocType == "Sales Order" && link.ChildDocType == "Sales Invoice" {
-		updateItemSQL := `UPDATE "tabSalesOrderItem" 
-						 SET invoiced_qty = invoiced_qty + ? 
-						 WHERE parent = ? AND item_code = ? AND tenant_id = ?`
-		
-		if err := tx.Exec(updateItemSQL, link.Qty, link.ParentName, link.ItemCode, tenantID).Error; err != nil {
-			tx.Rollback()
-			return err
-		}
-
-		// Check if fully invoiced to update Parent Status
-		var pending float64
-		checkSQL := `SELECT SUM(qty - invoiced_qty) FROM "tabSalesOrderItem" WHERE parent = ? AND tenant_id = ?`
-		tx.Raw(checkSQL, link.ParentName, tenantID).Scan(&pending)
-
-		status := "Partially Invoiced"
-		if pending <= 0 {
-			status = "Fully Invoiced"
-		}
-
-		if err := tx.Table("tabSalesOrder").
-			Where("name = ? AND tenant_id = ?", link.ParentName, tenantID).
-			Update("status", status).Error; err != nil {
-			tx.Rollback()
-			return err
-		}
-	}
-
-	return tx.Commit().Error
+// ReversalImpact menyimpan ringkasan dokumen yang akan terkena dampak pembatalan.
+type RevaluationImpact struct {
+	DocType string
+	Name    string
+	Action  string // "Reverse", "Unlink", "Warning"
 }
 
-// MapDocument performs "Make Sales Invoice" logic from Sales Order
-func MapDocument(fromDocType, fromName, toDocType string, tenantID string) (map[string]interface{}, error) {
-	// This is the "Engine Mapper" that automatically fetches data from SO to SI
-	// including only the REMAINING quantity.
-	
-	// 1. Fetch source document and items
-	var sourceDoc map[string]interface{}
-	database.DB.Table("tab"+fromDocType).Where("name = ? AND tenant_id = ?", fromName, tenantID).First(&sourceDoc)
-	
-	var items []map[string]interface{}
-	itemTable := "tab" + fromDocType + "Item"
-	database.DB.Table(itemTable).
-		Where("parent = ? AND tenant_id = ? AND (qty - invoiced_qty) > 0", fromName, tenantID).
-		Find(&items)
+// CascadeReverseDocument melakukan pembatalan berantai secara rekursif.
+func CascadeReverseDocument(tx *gorm.DB, tenantID string, dt string, name string) ([]RevaluationImpact, error) {
+	var impact []RevaluationImpact
 
-	if len(items) == 0 {
-		return nil, fmt.Errorf("no pending items to map from %s", fromName)
+	// 1. Cari semua dokumen anak yang aktif (docstatus = 1)
+	var children []struct {
+		ChildDT   string
+		ChildName string
+	}
+	tx.Table("tabDocLink").
+		Where("tenant_id = ? AND parent_name = ? AND docstatus = 1", tenantID, name).
+		Scan(&children)
+
+	for _, child := range children {
+		// 2. Rekursi ke bawah dulu (Bottom-up Reversal)
+		childImpact, err := CascadeReverseDocument(tx, tenantID, child.ChildDT, child.ChildName)
+		if err != nil {
+			return nil, fmt.Errorf("failed to reverse child %s %s: %v", child.ChildDT, child.ChildName, err)
+		}
+		impact = append(impact, childImpact...)
+
+		// 3. Eksekusi pembatalan spesifik per DocType (via Hook)
+		// Di sini kita memanggil fungsi pembatalan generik
+		if err := executeInternalCancel(tx, tenantID, child.ChildDT, child.ChildName); err != nil {
+			return nil, err
+		}
+		impact = append(impact, RevaluationImpact{DocType: child.ChildDT, Name: child.ChildName, Action: "Reverse"})
 	}
 
-	// 2. Build target document
-	target := make(map[string]interface{})
-	target["customer"] = sourceDoc["customer"]
-	target["company"] = sourceDoc["company"]
-	target["from_voucher_no"] = fromName
-	
-	var targetItems []map[string]interface{}
-	for _, itm := range items {
-		qty := itm["qty"].(float64) - itm["invoiced_qty"].(float64)
-		targetItems = append(targetItems, map[string]interface{}{
-			"item_code": itm["item_code"],
-			"qty":       qty,
-			"rate":      itm["rate"],
-			"amount":    qty * itm["rate"].(float64),
-			"so_detail": itm["name"],
-		})
-	}
-	target["items"] = targetItems
+	return impact, nil
+}
 
-	return target, nil
+func executeInternalCancel(tx *gorm.DB, tenantID string, dt string, name string) error {
+	// Update status dokumen menjadi Cancelled (2)
+	tableName := "tab" + dt
+	if err := tx.Table(tableName).Where("tenant_id = ? AND name = ?", tenantID, name).Update("docstatus", 2).Error; err != nil {
+		return err
+	}
+	
+	// Tandai DocLink sebagai tidak aktif
+	return tx.Table("tabDocLink").Where("tenant_id = ? AND child_name = ?", tenantID, name).Update("docstatus", 2).Error
 }

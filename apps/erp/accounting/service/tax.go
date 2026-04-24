@@ -4,65 +4,70 @@ import (
 	"math"
 )
 
-type TaxType string
-
-const (
-	OnNetTotal     TaxType = "On Net Total"
-	OnPreviousRow  TaxType = "On Previous Row Amount"
-)
-
-type TaxRow struct {
+type TaxEntry struct {
 	AccountHead   string  `json:"account_head"`
-	Description   string  `json:"description"`
+	ChargeType    string  `json:"charge_type"` // "On Net Total", "Actual"
 	Rate          float64 `json:"rate"`
-	TaxAmount     float64 `json:"tax_amount"`
-	TotalAmount   float64 `json:"total_amount"`
-	IncludedInPrice bool  `json:"included_in_price"`
+	Amount        float64 `json:"amount"`
+	IsInclusive   bool    `json:"is_inclusive"`
+	IsWithholding bool    `json:"is_withholding"`
+	Description   string  `json:"description"`
 }
 
 type TaxResult struct {
-	NetTotal   float64  `json:"net_total"`
-	TaxTotal   float64  `json:"tax_total"`
-	GrandTotal float64  `json:"grand_total"`
-	Taxes      []TaxRow `json:"taxes"`
+	NetTotal   float64    `json:"net_total"`
+	TotalTax   float64    `json:"total_tax"`
+	GrandTotal float64    `json:"grand_total"`
+	Taxes      []TaxEntry `json:"taxes"`
 }
 
-// CalculateTaxes performs the core tax logic
-func CalculateTaxes(baseAmount float64, taxRows []TaxRow) TaxResult {
+// CalculateTaxes performs generic tax calculations based on document net total.
+func CalculateTaxes(netTotal float64, taxes []TaxEntry) TaxResult {
 	result := TaxResult{
-		NetTotal: baseAmount,
-		Taxes:    make([]TaxRow, len(taxRows)),
+		NetTotal:   netTotal,
+		GrandTotal: netTotal,
+		Taxes:      make([]TaxEntry, len(taxes)),
 	}
 
-	runningTotal := baseAmount
-	var totalTax float64
+	for i, tax := range taxes {
+		var taxAmount float64
 
-	for i, row := range taxRows {
-		var amount float64
-		
-		if row.IncludedInPrice {
-			// Back-calculate from inclusive price: Tax = Total - (Total / (1 + Rate/100))
-			amount = runningTotal - (runningTotal / (1 + (row.Rate / 100)))
-			// For inclusive, net total actually decreases
-			result.NetTotal -= amount
+		if tax.ChargeType == "Actual" {
+			taxAmount = tax.Amount
 		} else {
-			// Standard exclusive calculation
-			amount = runningTotal * (row.Rate / 100)
+			// Calculation based on Rate
+			if tax.IsInclusive {
+				// Amount = NetTotal - (NetTotal / (1 + Rate/100))
+				taxAmount = netTotal - (netTotal / (1 + (tax.Rate / 100)))
+			} else {
+				// Amount = NetTotal * (Rate / 100)
+				taxAmount = netTotal * (tax.Rate / 100)
+			}
 		}
 
-		// Precision Rounding (2 decimal places for financial)
-		amount = math.Round(amount*100) / 100
-		
-		result.Taxes[i] = row
-		result.Taxes[i].TaxAmount = amount
-		
-		if !row.IncludedInPrice {
-			totalTax += amount
+		// Rounding to 2 decimal places (Enterprise Standard)
+		taxAmount = math.Round(taxAmount*100) / 100
+
+		if tax.IsWithholding {
+			// Withholding (PPh) reduces the amount to be paid
+			taxAmount = -math.Abs(taxAmount)
+			result.GrandTotal += taxAmount
+		} else {
+			if !tax.IsInclusive {
+				// Exclusive tax (PPN) increases the amount to be paid
+				result.GrandTotal += taxAmount
+			}
+			// Inclusive tax is already part of NetTotal/GrandTotal
 		}
+
+		result.Taxes[i] = tax
+		result.Taxes[i].Amount = taxAmount
+		result.TotalTax += taxAmount
 	}
 
-	result.TaxTotal = totalTax
-	result.GrandTotal = result.NetTotal + totalTax
-	
+	// Final Grand Total rounding
+	result.GrandTotal = math.Round(result.GrandTotal*100) / 100
+	result.TotalTax = math.Round(result.TotalTax*100) / 100
+
 	return result
 }

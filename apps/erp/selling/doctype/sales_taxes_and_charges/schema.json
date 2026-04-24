@@ -1,0 +1,45 @@
+{
+  "name": "SalesTaxesAndCharges",
+  "module": "selling",
+  "fields": [
+    {
+      "name": "account_head",
+      "label": "Account Head",
+      "fieldtype": "Link",
+      "options": "Account",
+      "reqd": 1
+    },
+    {
+      "name": "charge_type",
+      "label": "Charge Type",
+      "fieldtype": "Select",
+      "options": ["On Net Total", "Actual"],
+      "default": "On Net Total"
+    },
+    {
+      "name": "rate",
+      "label": "Rate",
+      "fieldtype": "Float"
+    },
+    {
+      "name": "amount",
+      "label": "Amount",
+      "fieldtype": "Currency"
+    },
+    {
+      "name": "is_inclusive",
+      "label": "Is Inclusive",
+      "fieldtype": "Check"
+    },
+    {
+      "name": "is_withholding",
+      "label": "Is Withholding",
+      "fieldtype": "Check"
+    },
+    {
+      "name": "description",
+      "label": "Description",
+      "fieldtype": "Text"
+    }
+  ]
+}
